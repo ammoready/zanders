@@ -18,6 +18,10 @@ module Zanders
       @password = options[:password]
     end
 
+    def self.ship_to_number(address, options = {})
+      new(options).ship_to_number(address)
+    end
+
     # Public: Get a shipToNumber for the address
     # provided in `address`
     #
