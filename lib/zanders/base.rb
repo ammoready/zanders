@@ -1,12 +1,11 @@
 module Zanders
   class Base
 
-    def self.connection(options = {})
+    def self.connect(options = {})
       requires!(options, :username, :password)
 
       Net::FTP.open(Zanders.config.ftp_host, options[:username], options[:password]) do |ftp|
         ftp.passive = true
-
         yield ftp
       end
     rescue Net::FTPPermError
@@ -30,6 +29,13 @@ module Zanders
         else
           raise ArgumentError.new("Missing required parameter: #{param}") unless hash.has_key?(param)
         end
+      end
+    end
+
+    # Instance methods become class methods through inheritance
+    def connect(options)
+      self.class.connect(options) do |ftp|
+        yield ftp
       end
     end
 
