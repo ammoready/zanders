@@ -11,6 +11,7 @@ require 'zanders/soap_client'
 require 'zanders/address'
 require 'zanders/order'
 require 'zanders/item'
+require 'zanders/inventory'
 
 module Zanders
 
