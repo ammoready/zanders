@@ -17,8 +17,8 @@ module Zanders
   DEBUG = true
 
   ADDRESS_API_URL = 'https://shop2.gzanders.com/webservice/shiptoaddresses?wsdl'
-  ORDER_API_URL = 'https://shop2.gzanders.com/webservice/orders?wsdl'
-  ITEM_API_URL = 'https://shop2.gzanders.com/webservice/items?wsdl'
+  ORDER_API_URL   = 'https://shop2.gzanders.com/webservice/orders?wsdl'
+  ITEM_API_URL    = 'https://shop2.gzanders.com/webservice/items?wsdl'
 
   class NotAuthenticated < StandardError; end
 
@@ -36,9 +36,11 @@ module Zanders
 
   class Configuration
     attr_accessor :ftp_host
+    attr_accessor :ftp_directory
 
-    def intiialize
+    def initialize
       @ftp_host ||= "ftp.gzanders.com"
+      @ftp_directory ||= "Inventory/AmmoReady"
     end
   end
 end
