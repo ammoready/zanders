@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe Zanders::Address do
 
-  let(:credentials) { { username: '', password: '' } }
+  let(:credentials) { { username: 'login', password: 'password' } }
   let(:address) { Zanders::Address.new(credentials) }
 
   describe '#initialize' do

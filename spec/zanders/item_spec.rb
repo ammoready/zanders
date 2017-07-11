@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Zanders::Item do
 
-  let(:credentials) { { username: '', password: '' } }
+  let(:credentials) { { username: 'login', password: 'password' } }
   let(:item) { Zanders::Item.new(credentials) }
 
   describe '#initialize' do
