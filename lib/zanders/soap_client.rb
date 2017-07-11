@@ -25,6 +25,7 @@ module Zanders
         namespaces(namespaces)
         namespace_identifier(:ns1)
         strip_namespaces true
+        ssl_verify_mode :none
 
         if DEBUG
           log(true)
