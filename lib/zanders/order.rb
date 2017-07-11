@@ -82,6 +82,13 @@ module Zanders
         })
 
         response = soap_client(ORDER_API_URL).call(:create_order, message: order)
+        response = response.body[:create_order_response][:return][:item]
+
+        if response.first[:value] == "0"
+          { success: true, order_number: response.last[:value] }
+        else
+          { success: false, error_code: response.first[:value] }
+        end
       end
     end
 
