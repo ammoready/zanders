@@ -8,6 +8,7 @@ require 'pp'
 require 'zanders/base'
 require 'zanders/soap_client'
 
+require 'zanders/user'
 require 'zanders/address'
 require 'zanders/order'
 require 'zanders/item'
