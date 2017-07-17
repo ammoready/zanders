@@ -35,9 +35,11 @@ module Zanders
     # Public: Create a new order
     #
     # items - Array of hashes containing item_number and quantity
+    # address - Hash of address
+    # purchase_order - internal identifier for the order
     #
     # Returns an order_number
-    def create_order(items, address)
+    def create_order(items, address, purchase_order)
       order = build_order_data
       order_items = Array.new
 
@@ -60,6 +62,8 @@ module Zanders
           # TODO-david
           { key: 'purchaseOrderNumber', value: '4567' }
         ]
+
+        order[:purchase_order_number] = purchase_order
 
         # NOTE-david
         # order(ns2 map)
