@@ -59,11 +59,8 @@ module Zanders
           { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
           # TODO-david
           { key: 'ShipViaCode', value: 'UG' },
-          # TODO-david
-          { key: 'purchaseOrderNumber', value: '4567' }
+          { key: 'purchaseOrderNumber', value: purchase_order }
         ]
-
-        order[:purchase_order_number] = purchase_order
 
         # NOTE-david
         # order(ns2 map)
