@@ -169,6 +169,15 @@ module Zanders
       hash
     end
 
+    # Private: Formats the name and phone number into a
+    # string that is 80 characters long, with the first
+    # 40 being the name, and the last being the phone
+    # number. (This is the required format from Zanders
+    #
+    # name - A String of the name
+    # phone_number - A string containing the phone number
+    #
+    # Returns a String(80) of the name and phone number
     def format_shipping_instructions(name, phone_number)
       shipping_instructions = "%-40.40s" % name
       shipping_instructions += phone_number
