@@ -39,7 +39,7 @@ module Zanders
     # purchase_order - internal identifier for the order
     #
     # Returns an order_number
-    def create_order(items, address, purchase_order)
+    def create_order(items, address, purchase_order, details = {})
       order = build_order_data
       order_items = Array.new
 
@@ -57,10 +57,15 @@ module Zanders
         shipping_information = [
           { key: 'shipToNo', value: ship_to_number[:ship_to_number] },
           { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
-          # TODO-david
           { key: 'shipViaCode', value: 'UG' },
           { key: 'purchaseOrderNumber', value: purchase_order }
         ]
+
+        if details[:name]
+          shipping_information.push(
+            { key: 'shipInstructions', value: format_shipping_instructions(details[:name], details[:phone_number]) }
+          )
+        end
 
         # NOTE-david
         # order(ns2 map)
@@ -162,6 +167,11 @@ module Zanders
       }
 
       hash
+    end
+
+    def format_shipping_instructions(name, phone_number)
+      shipping_instructions = "%-40.40s" % name
+      shipping_instructions += phone_number
     end
 
   end
