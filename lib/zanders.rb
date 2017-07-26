@@ -2,8 +2,6 @@ require "zanders/version"
 
 require 'net/ftp'
 require 'savon'
-# TODO-david
-require 'pp'
 
 require 'zanders/base'
 require 'zanders/soap_client'
