@@ -14,7 +14,7 @@ require 'zanders/inventory'
 
 module Zanders
 
-  DEBUG = true
+  DEBUG = false
 
   ADDRESS_API_URL = 'https://shop2.gzanders.com/webservice/shiptoaddresses?wsdl'
   ORDER_API_URL   = 'https://shop2.gzanders.com/webservice/orders?wsdl'
