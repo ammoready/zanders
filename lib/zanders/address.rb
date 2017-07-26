@@ -44,7 +44,6 @@ module Zanders
 
         # We only need the ship_to_number out of the data received
         ship_to_number[:ship_to_number] = parts.find { |i| i[:key] == "ShipToNo" }[:value]
-
         ship_to_number[:success] = true
 
         ship_to_number

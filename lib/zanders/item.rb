@@ -77,8 +77,7 @@ module Zanders
 
         # We only need the quantity out of the data received
         quantity[:quantity] = response.find { |i| i[:key] == "numberAvailable" }[:value]
-
-        quantity[:success] = true
+        quantity[:success]  = true
 
         quantity
       else

@@ -6,6 +6,7 @@ module Zanders
 
       Net::FTP.open(Zanders.config.ftp_host, options[:username], options[:password]) do |ftp|
         ftp.passive = true
+
         yield ftp
       end
     rescue Net::FTPPermError

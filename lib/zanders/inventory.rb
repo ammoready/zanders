@@ -1,8 +1,8 @@
 module Zanders
   class Inventory < Base
 
-    INVENTORY_FILENAME = "zandersinv.csv"
-    QUANTITY_FILENAME = "liveinv.csv"
+    INVENTORY_FILENAME  = "zandersinv.csv"
+    QUANTITY_FILENAME   = "liveinv.csv"
 
     def initialize(options = {})
       requires!(options, :username, :password)
