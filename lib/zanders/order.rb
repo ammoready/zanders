@@ -39,7 +39,7 @@ module Zanders
     # purchase_order - internal identifier for the order
     #
     # Returns an order_number
-    def create_order(items, address, purchase_order, details = {})
+    def create_order(items, address, purchase_order_number, details = {})
       order = build_order_data
       order_items = Array.new
 
@@ -58,7 +58,7 @@ module Zanders
           { key: 'shipToNo', value: ship_to_number[:ship_to_number] },
           { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
           { key: 'shipViaCode', value: 'UG' },
-          { key: 'purchaseOrderNumber', value: purchase_order }
+          { key: 'purchaseOrderNumber', value: purchase_order_number }
         ]
 
         if details[:name]
