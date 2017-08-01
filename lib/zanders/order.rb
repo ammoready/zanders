@@ -41,7 +41,9 @@ module Zanders
     # Returns an order_number
     def create_order(items, address, purchase_order_number, details = {})
       order = build_order_data
-      order_items = Array.new
+      order_items   = Array.new
+      order[:order] = Hash.new
+      shipping_information = Array.new
 
       items.each do |item|
         order_items.push(item: [
@@ -51,50 +53,59 @@ module Zanders
         ])
       end
 
-      ship_to_number = Zanders::Address.ship_to_number(address, @options)
+      shipping_information.push(*[
+        { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
+        { key: 'shipViaCode', value: 'UG' },
+        { key: 'purchaseOrderNumber', value: purchase_order_number }
+      ])
 
-      if ship_to_number[:success]
-        shipping_information = [
-          { key: 'shipToNo', value: ship_to_number[:ship_to_number] },
-          { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
-          { key: 'shipViaCode', value: 'UG' },
-          { key: 'purchaseOrderNumber', value: purchase_order_number }
-        ]
+      if address[:fflno].present?
+        ship_to_number = Zanders::Address.ship_to_number(address, @options)
 
-        if details[:name]
-          shipping_information.push(
-            { key: 'shipInstructions', value: format_shipping_instructions(details[:name], details[:phone_number]) }
-          )
+        if ship_to_number[:success]
+          shipping_information.push({key: 'shipToNo', value: ship_to_number[:ship_to_number] })
         end
+      else
+        shipping_information.push(*[
+          { key: 'shipToAddress1',  value: address[:address1] },
+          { key: 'shipToAddress2',  value: address[:address2] },
+          { key: 'shipToCity',      value: address[:city]     },
+          { key: 'shipToState',     value: address[:state]    },
+          { key: 'shipToZip',       value: address[:zip]      }
+        ])
+      end
 
-        # NOTE-david
-        # order(ns2 map)
-        #   item
-        #     key
-        #     value(ns2map)
-        #       item  - order item
-        #       item  - order item
-        #   item
-        #     "
-        #   
-        order[:order] = Hash.new
-        order[:order][:item] = shipping_information
+      if details[:name]
+        shipping_information.push(
+          { key: 'shipInstructions', value: format_shipping_instructions(details[:name], details[:phone_number]) }
+        )
+      end
 
-        order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"}, value: {"SOAP-ENC:arrayType" => "ns2:Map[2]", "xsi:type" => "SOAP-ENV:Array"} }}
+      # NOTE-david
+      # order(ns2 map)
+      #   item
+      #     key
+      #     value(ns2map)
+      #       item  - order item
+      #       item  - order item
+      #   item
+      #     "
+      #
+      order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"}, value: {"SOAP-ENC:arrayType" => "ns2:Map[2]", "xsi:type" => "SOAP-ENV:Array"} }}
+      order[:order][:item] = shipping_information
 
-        order[:order][:item].push({
-          key: 'items',
-          value: order_items
-        })
+      order[:order][:item].push({
+        key: 'items',
+        value: order_items
+      })
 
-        response = soap_client(ORDER_API_URL).call(:create_order, message: order)
-        response = response.body[:create_order_response][:return][:item]
+      response = soap_client(ORDER_API_URL).call(:create_order, message: order)
+      response = response.body[:create_order_response][:return][:item]
 
-        if response.first[:value] == "0"
-          { success: true, order_number: response.last[:value] }
-        else
-          { success: false, error_code: response.first[:value] }
-        end
+      if response.first[:value] == "0"
+        { success: true, order_number: response.last[:value] }
+      else
+        { success: false, error_code: response.first[:value] }
       end
     end
 
