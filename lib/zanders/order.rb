@@ -81,6 +81,8 @@ module Zanders
         )
       end
 
+      order[:order][:item] = shipping_information
+
       # NOTE-david
       # order(ns2 map)
       #   item
@@ -92,7 +94,6 @@ module Zanders
       #     "
       #
       order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"}, value: {"SOAP-ENC:arrayType" => "ns2:Map[2]", "xsi:type" => "SOAP-ENV:Array"} }}
-      order[:order][:item] = shipping_information
 
       order[:order][:item].push({
         key: 'items',
