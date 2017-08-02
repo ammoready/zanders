@@ -49,7 +49,7 @@ module Zanders
         order_items.push(item: [
           { key: 'itemNumber', value: item[:item_number] },
           { key: 'quantity', value: item[:quantity] },
-          { key: 'allowBackOrder', value: false }
+          { key: 'allowBackOrder', value: false, attributes!: { value: {'xsi:type' => 'xsd:boolean'} }}
         ])
       end
 
