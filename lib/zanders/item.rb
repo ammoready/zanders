@@ -95,8 +95,8 @@ module Zanders
     def build_request_data(hash)
       {
         username: @username,
-        password: @password,
-        testing: true
+        password: @password
+        #testing: true
       }.merge(hash)
     end
 

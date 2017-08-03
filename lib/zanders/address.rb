@@ -78,8 +78,8 @@ module Zanders
             { key: 'fflno',     value: hash[:fflno]     },
             { key: 'fflexp',    value: hash[:fflexp]    }
           ]
-        },
-        testing: true
+        }
+        #testing: true
       }
     end
 
