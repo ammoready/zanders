@@ -64,6 +64,8 @@ module Zanders
 
         if ship_to_number[:success]
           shipping_information.push({key: 'shipToNo', value: ship_to_number[:ship_to_number] })
+        else
+          return { success: false, error_code: ship_to_number[:error_code] }
         end
       else
         shipping_information.push(*[
