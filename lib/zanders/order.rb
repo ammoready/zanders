@@ -165,6 +165,44 @@ module Zanders
       end
     end
 
+    def get_tracking_info(order_number)
+      order = build_order_data.merge({ ordernumber: order_number })
+
+      response = soap_client(ORDER_API_URL).call(:get_tracking_info, message: order)
+      response = response.body[:get_tracking_info_response][:return][:item]
+
+      if response.first[:value] == "0"
+        info = Hash.new
+
+        if response.find { |i| i[:key] == "numberOfShipments" }[:value] != "0"
+          tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
+
+          tracking_numbers[:item][:item].each do |part|
+            case part[:key]
+            when 'shipCompany'
+              info[:company] = part[:value]
+            when 'shipVia'
+              info[:via] = part[:value]
+            when 'trackingNumber'
+              info[:tracking_number] = part[:value]
+            when 'weight'
+              info[:weight] = part[:value]
+            when 'url'
+              info[:url] = part[:value]
+            end
+          end
+
+          info[:success] = true
+
+          info
+        else
+          { success: false, error_code: response.first[:value], error_message: "No present tracking information" }
+        end
+      else
+        { success: false, error_code: response.first[:value] }
+      end
+    end
+
     private
 
     # Private: Builds request data
