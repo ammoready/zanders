@@ -67,6 +67,8 @@ module Zanders
         else
           return { success: false, error_code: ship_to_number[:error_code] }
         end
+      elsif address == nil
+        shipping_information.push({key: 'shipToNo', value: '0001'})
       else
         shipping_information.push(*[
           { key: 'shipToAddress1',  value: address[:address1] },
