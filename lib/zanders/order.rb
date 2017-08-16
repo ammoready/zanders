@@ -59,7 +59,9 @@ module Zanders
         { key: 'purchaseOrderNumber', value: purchase_order_number }
       ])
 
-      if address[:fflno].present?
+      if address == nil
+        shipping_information.push({key: 'shipToNo', value: '0001'})
+      elsif address[:fflno].present?
         ship_to_number = Zanders::Address.ship_to_number(address, @options)
 
         if ship_to_number[:success]
@@ -67,8 +69,6 @@ module Zanders
         else
           return { success: false, error_code: ship_to_number[:error_code] }
         end
-      elsif address == nil
-        shipping_information.push({key: 'shipToNo', value: '0001'})
       else
         shipping_information.push(*[
           { key: 'shipToAddress1',  value: address[:address1] },
