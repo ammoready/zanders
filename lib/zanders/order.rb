@@ -47,9 +47,9 @@ module Zanders
 
       items.each do |item|
         order_items.push(item: [
-          { key: 'itemNumber', value: item[:item_number], attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:int'} }},
-          { key: 'quantity', value: item[:quantity] , attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:int'} }},
-          { key: 'allowBackOrder', value: false, attributes!: { value: {'xsi:type' => 'xsd:boolean'} }}
+          { key: 'itemNumber', value: item[:item_number], attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:string'} }},
+          { key: 'quantity', value: item[:quantity] , attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:string'} }},
+          { key: 'allowBackOrder', value: false, attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: {'xsi:type' => 'xsd:boolean'} }}
         ])
       end
 
@@ -71,6 +71,7 @@ module Zanders
         end
       else
         shipping_information.push(*[
+          { key: 'shipToName',      value: address[:name]     },
           { key: 'shipToAddress1',  value: address[:address1] },
           { key: 'shipToAddress2',  value: address[:address2] },
           { key: 'shipToCity',      value: address[:city]     },
@@ -97,14 +98,14 @@ module Zanders
       #   item
       #     "
       #
-      order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"}, value: {"SOAP-ENC:arrayType" => "ns2:Map[#{order_items.count}]", "xsi:type" => "SOAP-ENC:Array"} }}
+      order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"} }}
 
       order[:order][:item].push({
         key: 'items',
         value: order_items,
         attributes!: {
           key: {"xsi:type" => "xsd:string"},
-          value: {"SOAP-ENC:arrayType" => "ns2:Map[#{order_items.count}]", "xsi:type" => "SOAP-ENC:Array"}
+          value: {"enc:itemType" => "ns2:Map[#{order_items.count}]", "enc:arraySize" => order_items.count.to_s, "xsi:type" => "enc:Array"}
         }
       })
 
