@@ -47,8 +47,8 @@ module Zanders
 
       items.each do |item|
         order_items.push(item: [
-          { key: 'itemNumber', value: item[:item_number] },
-          { key: 'quantity', value: item[:quantity] },
+          { key: 'itemNumber', value: item[:item_number], attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:int'} }},
+          { key: 'quantity', value: item[:quantity] , attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:int'} }},
           { key: 'allowBackOrder', value: false, attributes!: { value: {'xsi:type' => 'xsd:boolean'} }}
         ])
       end
@@ -97,11 +97,15 @@ module Zanders
       #   item
       #     "
       #
-      order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"}, value: {"SOAP-ENC:arrayType" => "ns2:Map[2]", "xsi:type" => "SOAP-ENV:Array"} }}
+      order_items = {item: order_items, attributes!: { item: { "xsi:type" => "ns2:Map"}, value: {"SOAP-ENC:arrayType" => "ns2:Map[#{order_items.count}]", "xsi:type" => "SOAP-ENC:Array"} }}
 
       order[:order][:item].push({
         key: 'items',
-        value: order_items
+        value: order_items,
+        attributes!: {
+          key: {"xsi:type" => "xsd:string"},
+          value: {"SOAP-ENC:arrayType" => "ns2:Map[#{order_items.count}]", "xsi:type" => "SOAP-ENC:Array"}
+        }
       })
 
       response = soap_client(ORDER_API_URL).call(:create_order, message: order)
