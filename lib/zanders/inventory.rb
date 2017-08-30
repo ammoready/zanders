@@ -43,7 +43,6 @@ module Zanders
           }) do |chunk|
             chunk.each do |item|
               item[:long_description] = "#{item[:short_description]} #{item[:desc2]}"
-              item.delete(:desc2)
             end
 
             yield(chunk)
@@ -64,7 +63,19 @@ module Zanders
           ftp.chdir(Zanders.config.ftp_directory)
           ftp.getbinaryfile(QUANTITY_FILENAME, csv_tempfile.path)
 
-          SmarterCSV.process(csv_tempfile, { :chunk_size => chunk_size, :convert_values_to_numeric => false }) do |chunk|
+          SmarterCSV.process(csv_tempfile, {
+            :chunk_size => chunk_size,
+            :convert_values_to_numeric => false,
+            :key_mapping => {
+              :available  => :quantity,
+              :itemnumber => :item_identifier,
+              :price1     => :price
+            }
+          }) do |chunk|
+            chunk.each do |item|
+              item.except!(:qty1, :qty2, :qty3, :price2, :price3)
+            end
+
             yield(chunk)
           end
 
