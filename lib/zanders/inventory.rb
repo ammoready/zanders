@@ -43,6 +43,8 @@ module Zanders
           }) do |chunk|
             chunk.each do |item|
               item[:long_description] = "#{item[:short_description]} #{item[:desc2]}"
+
+              item.except!(:desc2, :qty1, :qty2, :qty3, :price2, :price3)
             end
 
             yield(chunk)
