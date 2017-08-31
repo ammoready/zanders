@@ -11,6 +11,7 @@ require 'zanders/address'
 require 'zanders/order'
 require 'zanders/item'
 require 'zanders/inventory'
+require 'zanders/catalog'
 
 module Zanders
 
