@@ -48,7 +48,7 @@ module Zanders
 
         ship_to_number
       else
-        { success: false, error_code: response.first[:value] }
+        { success: false, error_code: response.first[:value], error_message: response.last[:value] }
       end
     end
 

@@ -115,7 +115,7 @@ module Zanders
       if response.first[:value] == "0"
         { success: true, order_number: response.last[:value] }
       else
-        { success: false, error_code: response.first[:value] }
+        { success: false, error_code: response.first[:value], error_message: response.last[:value] }
       end
     end
 
