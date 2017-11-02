@@ -36,7 +36,7 @@ module Zanders
       response = response.body[:use_ship_to_response][:return][:item]
 
       # Successful call return_code is 0
-      if response.first[:value] == "0"
+      if response.first[:value] == "0" || response.first[:value] == "15"
         ship_to_number = Hash.new
 
         # Let's dig to get to data we actually need. Yay, digging...
