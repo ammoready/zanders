@@ -1,11 +1,10 @@
 module Zanders
   class Catalog < Base
 
-    CATALOG_FILENAME  = "zandersinv.csv"
+    CATALOG_FILENAME  = "zandersinv.xml"
 
     def initialize(options = {})
       requires!(options, :username, :password)
-
       @options = options
     end
 
@@ -14,7 +13,9 @@ module Zanders
       new(options).all(chunk_size, &block)
     end
 
-    def all(chunk_size, &block)
+   def all(chunk_size, &block)
+      chunker = Zanders::Chunker.new(chunk_size)
+
       connect(@options) do |ftp|
         begin
           csv_tempfile = Tempfile.new
@@ -22,27 +23,20 @@ module Zanders
           ftp.chdir(Zanders.config.ftp_directory)
           ftp.getbinaryfile(CATALOG_FILENAME, csv_tempfile.path)
 
-          SmarterCSV.process(csv_tempfile, {
-            :chunk_size => chunk_size,
-            :convert_values_to_numeric => false,
-            :key_mapping => {
-              :available    => :quantity,
-              :desc1        => :short_description,
-              :itemnumber   => :item_identifier,
-              :manufacturer => :brand,
-              :mfgpnumber   => :mfg_number,
-              :mapprice     => :map_price,
-              :price1       => :price
-            }
-          }) do |chunk|
-            chunk.each do |item|
-              item[:name] = item[:short_description]
-              item[:long_description] = "#{item[:short_description]} #{item[:desc2]}"
+          xml_doc = Nokogiri::XML(csv_tempfile)
 
-              item.except!(:desc2, :qty1, :qty2, :qty3, :price2, :price3)
+          xml_doc.xpath("//ZandersDataOut").each do |item|
+            if chunker.is_full?
+              yield(chunker.chunk)
+
+              chunker.reset!
+            else
+              chunker.add(map_hash(item, @options[:full_product].present?))
             end
+          end
 
-            yield(chunk)
+          if chunker.chunk.count > 0
+            yield(chunker.chunk)
           end
 
           csv_tempfile.unlink
@@ -50,6 +44,41 @@ module Zanders
           ftp.close
         end
       end
+    end
+
+    protected
+
+    def map_hash(node, full_product = false)
+      features = self.map_features(node)
+
+      {
+        name:               content_for(node, 'ITEMDESCRIPTION'),
+        upc:                content_for(node, 'ITEMUPC'),
+        item_identifier:    content_for(node, 'ITEMNO'),
+        quantity:           content_for(node, 'ITEMQTYAVAIL'),
+        price:              content_for(node, 'ITEMPRICE'),
+        short_description:  content_for(node, 'ITEMDESCRIPTION'),
+        category:           content_for(node, 'ITEMCATEGORYNAME'),
+        product_type:       content_for(node, 'ITEMPRODUCTTYPE'),
+        mfg_number:         content_for(node, 'ITEMMPN'),
+        weight:             content_for(node, 'ITEMWEIGHT'),
+        map_price:          content_for(node, 'ITEMMAPPRICE'),
+        brand:              content_for(node, 'ITEMMANUFACTURER'),
+        features:           features
+      }
+    end
+
+    def map_features(node)
+      features = Hash.new
+
+      node.css("ATTRIBUTE").each do |feature|
+        features[feature.css("TITLE").text.strip] = feature.css("DATA").text.strip
+      end
+
+      features.delete_if { |k, v| v.to_s.blank? }
+      features.transform_keys! { |k| k.gsub(/\s+/, '_').downcase }
+      features.transform_keys! { |k| k.gsub(/[^0-9A-Za-z \_]/, '') }
+      features.symbolize_keys!
     end
 
   end
