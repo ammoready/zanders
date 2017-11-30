@@ -62,6 +62,7 @@ module Zanders
         product_type:       content_for(node, 'ITEMPRODUCTTYPE'),
         mfg_number:         content_for(node, 'ITEMMPN'),
         weight:             content_for(node, 'ITEMWEIGHT'),
+        caliber:            features[:caliber],
         map_price:          content_for(node, 'ITEMMAPPRICE'),
         brand:              content_for(node, 'ITEMMANUFACTURER'),
         features:           features
