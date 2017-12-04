@@ -13,7 +13,7 @@ module Zanders
       new(options).all(chunk_size, &block)
     end
 
-   def all(chunk_size, &block)
+    def all(chunk_size, &block)
       chunker = Zanders::Chunker.new(chunk_size)
 
       connect(@options) do |ftp|
