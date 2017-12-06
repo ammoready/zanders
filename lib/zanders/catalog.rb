@@ -6,6 +6,10 @@ module Zanders
     def initialize(options = {})
       requires!(options, :username, :password)
       @options = options
+
+      if options[:full_product].present?
+        self.load_descriptions
+      end
     end
 
     def self.all(chunk_size = 15, options = {}, &block)
@@ -51,6 +55,10 @@ module Zanders
     def map_hash(node, full_product = false)
       features = self.map_features(node)
 
+      if full_product
+        long_description = self.get_description(content_for(node, 'ITEMNO'))
+      end
+
       {
         name:               content_for(node, 'ITEMDESCRIPTION'),
         upc:                content_for(node, 'ITEMUPC'),
@@ -58,6 +66,7 @@ module Zanders
         quantity:           content_for(node, 'ITEMQTYAVAIL'),
         price:              content_for(node, 'ITEMPRICE'),
         short_description:  content_for(node, 'ITEMDESCRIPTION'),
+        long_description:   long_description,
         category:           content_for(node, 'ITEMCATEGORYNAME'),
         product_type:       content_for(node, 'ITEMPRODUCTTYPE'),
         mfg_number:         content_for(node, 'ITEMMPN'),
@@ -67,6 +76,17 @@ module Zanders
         brand:              content_for(node, 'ITEMMANUFACTURER'),
         features:           features
       }
+    end
+
+    def get_description(item_number)
+      description = @descriptions.find { |x| x[0] == item_number }
+
+      if description
+        description = description.last
+        description.slice!("FEATURES")
+      end
+
+      description
     end
 
     def map_features(node)
@@ -80,6 +100,17 @@ module Zanders
       features.transform_keys! { |k| k.gsub(/\s+/, '_').downcase }
       features.transform_keys! { |k| k.gsub(/[^0-9A-Za-z \_]/, '') }
       features.symbolize_keys!
+    end
+
+    def load_descriptions
+      connect(@options) do |ftp|
+        csv_tempfile = Tempfile.new
+
+        ftp.chdir(Zanders.config.ftp_directory)
+        ftp.getbinaryfile('detaildesctext.csv', csv_tempfile.path)
+
+        @descriptions = CSV.read(csv_tempfile, { :col_sep => '~', :quote_char => "\x00" })
+      end
     end
 
   end
