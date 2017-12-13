@@ -1,7 +1,7 @@
 module Zanders
   class Inventory < Base
 
-    INVENTORY_FILENAME  = "liveinv.csv"
+    INVENTORY_FILENAME = "liveinv.csv"
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -20,15 +20,15 @@ module Zanders
           csv_tempfile = Tempfile.new
 
           ftp.chdir(Zanders.config.ftp_directory)
-          ftp.getbinaryfile(QUANTITY_FILENAME, csv_tempfile.path)
+          ftp.getbinaryfile(INVENTORY_FILENAME, csv_tempfile.path)
 
           SmarterCSV.process(csv_tempfile, {
-            :chunk_size => chunk_size,
-            :convert_values_to_numeric => false,
-            :key_mapping => {
-              :available  => :quantity,
-              :itemnumber => :item_identifier,
-              :price1     => :price
+            chunk_size: chunk_size,
+            convert_values_to_numeric: false,
+            key_mapping: {
+              available:  :quantity,
+              itemnumber: :item_identifier,
+              price1:     :price
             }
           }) do |chunk|
             chunk.each do |item|
