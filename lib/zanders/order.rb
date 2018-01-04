@@ -221,8 +221,8 @@ module Zanders
           order: { "xsi:type" => "ns2:Map" }
         },
         username: @username,
-        password: @password
-        #testing: true
+        password: @password,
+        testing: true
       }
 
       hash
