@@ -15,6 +15,7 @@ module Zanders
 
       @username = options[:username]
       @password = options[:password]
+      @testing  = options.fetch(:testing, false)
     end
 
     # Public: Get item info by item number
@@ -95,8 +96,8 @@ module Zanders
     def build_request_data(hash)
       {
         username: @username,
-        password: @password
-        #testing: true
+        password: @password,
+        testing:  @testing
       }.merge(hash)
     end
 

@@ -28,6 +28,7 @@ module Zanders
 
       @username = options[:username]
       @password = options[:password]
+      @testing  = options.fetch(:testing, false)
 
       @options = options
     end
@@ -221,8 +222,8 @@ module Zanders
           order: { "xsi:type" => "ns2:Map" }
         },
         username: @username,
-        password: @password
-        #testing: true
+        password: @password,
+        testing:  @testing
       }
 
       hash
