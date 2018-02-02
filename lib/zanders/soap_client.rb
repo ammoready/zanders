@@ -27,7 +27,7 @@ module Zanders
         strip_namespaces true
         ssl_verify_mode :none
 
-        if DEBUG
+        if Zanders.config.debug?
           log(true)
           log_level(:debug)
           pretty_print_xml(true)

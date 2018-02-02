@@ -16,8 +16,6 @@ require 'zanders/catalog'
 
 module Zanders
 
-  DEBUG = false
-
   ADDRESS_API_URL = 'https://shop2.gzanders.com/webservice/shiptoaddresses?wsdl'
   ORDER_API_URL   = 'https://shop2.gzanders.com/webservice/orders?wsdl'
   ITEM_API_URL    = 'https://shop2.gzanders.com/webservice/items?wsdl'
@@ -37,10 +35,14 @@ module Zanders
   end
 
   class Configuration
+    attr_accessor :debug
     attr_accessor :ftp_host
     attr_accessor :ftp_directory
 
+    alias debug? debug
+
     def initialize
+      @debug ||= false 
       @ftp_host ||= "ftp.gzanders.com"
       @ftp_directory ||= "Inventory/AmmoReady"
     end
