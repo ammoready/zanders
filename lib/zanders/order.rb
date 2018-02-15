@@ -53,9 +53,11 @@ module Zanders
         ])
       end
 
+      shipping_code = (@options[:account] == :store ? 'UM' : 'UG')
+
       shipping_information.push(*[
         { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
-        { key: 'shipViaCode', value: 'UG' },
+        { key: 'shipViaCode', value: shipping_code },
         { key: 'purchaseOrderNumber', value: purchase_order_number }
       ])
 
