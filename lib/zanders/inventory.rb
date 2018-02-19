@@ -7,8 +7,7 @@ module Zanders
       convert_values_to_numeric: false,
       key_mapping: {
         available:  :quantity,
-        itemnumber: :item_identifier,
-        price1:     :price
+        itemnumber: :item_identifier
       },
       remove_unmapped_keys: true
     }
@@ -44,6 +43,7 @@ module Zanders
         end
       end
     end
+    alias quantity all
 
   end
 end
