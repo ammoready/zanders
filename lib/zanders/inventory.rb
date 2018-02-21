@@ -23,6 +23,11 @@ module Zanders
       new(options).all(chunk_size, &block)
     end
 
+    def self.quantity(chunk_size = 100, options = {}, &block)
+      requires!(options, :username, :password)
+      new(options).all(chunk_size, &block)
+    end
+
     def all(chunk_size, &block)
       connect(@options) do |ftp|
         begin
@@ -43,7 +48,6 @@ module Zanders
         end
       end
     end
-    alias quantity all
 
   end
 end
