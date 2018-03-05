@@ -187,6 +187,8 @@ module Zanders
         if response.find { |i| i[:key] == "numberOfShipments" }[:value] != "0"
           tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
 
+          puts tracking_numbers.inspect
+
           tracking_numbers[:item][:item].each do |part|
             case part[:key]
             when 'shipCompany'
