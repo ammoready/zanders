@@ -183,11 +183,10 @@ module Zanders
 
       if response.first[:value] == "0"
         info = Hash.new
+        info[:number_of_shipments] = response.find { |i| i[:key] == "numberOfShipments" }[:value].to_i
 
-        if response.find { |i| i[:key] == "numberOfShipments" }[:value] != "0"
+        if info[:number_of_shipments] > 0
           tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
-
-          puts tracking_numbers.inspect
 
           tracking_numbers[:item][:item].each do |part|
             case part[:key]
