@@ -36,9 +36,6 @@ module Zanders
       response = soap_client(ADDRESS_API_URL).call(:use_ship_to, message: request_data)
       response = response.body[:use_ship_to_response][:return][:item]
 
-      puts '>>> ship_to_number'
-      p response
-
       # Successful call return_code is 0
       if response.first[:value] == "0"
         ship_to_number = Hash.new
@@ -52,7 +49,7 @@ module Zanders
 
         ship_to_number
       else
-        { success: false, error_code: response.first[:value], error_message: response.last[:value] }
+        { success: false, error_code: response.first[:value], error_message: (response.length == 3 ? response[1][:value] : nil) }
       end
     end
 
