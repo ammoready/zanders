@@ -1,16 +1,7 @@
 module Zanders
   class Inventory < Base
 
-    INVENTORY_FILENAME = "liveinv.csv"
-
-    DEFAULT_SMART_OPTS = {
-      convert_values_to_numeric: false,
-      key_mapping: {
-        available:  :quantity,
-        itemnumber: :item_identifier
-      },
-      remove_unmapped_keys: true
-    }
+    INVENTORY_FILENAME = "liveinv.xml"
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -29,24 +20,46 @@ module Zanders
     end
 
     def all(chunk_size, &block)
+      chunker = Zanders::Chunker.new(chunk_size)
+
       connect(@options) do |ftp|
         begin
-          csv_tempfile = Tempfile.new
+          tempfile = Tempfile.new
 
           ftp.chdir(Zanders.config.ftp_directory)
-          ftp.getbinaryfile(INVENTORY_FILENAME, csv_tempfile.path)
+          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
 
-          opts = DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)
+          xml_doc = Nokogiri::XML(tempfile)
 
-          SmarterCSV.process(csv_tempfile, opts) do |chunk|
-            yield(chunk)
+          xml_doc.xpath('//ZandersDataOut').each do |item|
+            if chunker.is_full?
+              yield(chunker.chunk)
+
+              chunker.reset!
+            else
+              chunker.add(map_hash(item))
+            end
           end
 
-          csv_tempfile.unlink
+          if chunker.chunk_count > 0
+            yield(chunker.chunk)
+          end
+
+          tempfile.unlink
         ensure
           ftp.close
         end
       end
+    end
+
+    private
+
+    def map_hash(node)
+      {
+        item_identifier:  content_for(node, 'ITEMNO'),
+        quantity:         content_for(node, 'AVAILABLE'),
+        price:            content_for(node, 'ITEMPRICE')
+      }
     end
 
   end
