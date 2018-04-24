@@ -41,7 +41,7 @@ module Zanders
             end
           end
 
-          if chunker.chunk_count > 0
+          if chunker.chunk.count > 0
             yield(chunker.chunk)
           end
 
