@@ -57,12 +57,13 @@ module Zanders
       xml_doc             = Nokogiri::XML(inventory_tempfile.open)
 
       xml_doc.xpath('//ZandersDataOut').each do |item|
-        tempfile.write("#{content_for(item, 'ITEMNO')},#{content_for(item, 'AVAILABLE')}\n")
+        tempfile.puts("#{content_for(item, 'ITEMNO')},#{content_for(item, 'AVAILABLE')}")
       end
 
       inventory_tempfile.unlink
+      tempfile.close
 
-      tempfile
+      tempfile.path
     end
 
     private
