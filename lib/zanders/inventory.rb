@@ -14,42 +14,55 @@ module Zanders
       new(options).all(chunk_size, &block)
     end
 
+    def self.get_quantity_file(options = {})
+      requires!(options, :username, :password)
+      new(options).get_quantity_file
+    end
+
     def self.quantity(chunk_size = 100, options = {}, &block)
       requires!(options, :username, :password)
       new(options).all(chunk_size, &block)
     end
 
+    def self.get_file(options = {})
+      requires!(options, :username, :password)
+      new(options).get_file
+    end
+
     def all(chunk_size, &block)
-      chunker = Zanders::Chunker.new(chunk_size)
+      chunker   = Zanders::Chunker.new(chunk_size)
+      tempfile  = get_file(INVENTORY_FILENAME)
+      xml_doc   = Nokogiri::XML(tempfile.open)
 
-      connect(@options) do |ftp|
-        begin
-          tempfile = Tempfile.new
+      xml_doc.xpath('//ZandersDataOut').each do |item|
+        if chunker.is_full?
+          yield(chunker.chunk)
 
-          ftp.chdir(Zanders.config.ftp_directory)
-          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
-
-          xml_doc = Nokogiri::XML(tempfile)
-
-          xml_doc.xpath('//ZandersDataOut').each do |item|
-            if chunker.is_full?
-              yield(chunker.chunk)
-
-              chunker.reset!
-            else
-              chunker.add(map_hash(item))
-            end
-          end
-
-          if chunker.chunk.count > 0
-            yield(chunker.chunk)
-          end
-
-          tempfile.unlink
-        ensure
-          ftp.close
+          chunker.reset!
+        else
+          chunker.add(map_hash(item))
         end
       end
+
+      if chunker.chunk.count > 0
+        yield(chunker.chunk)
+      end
+
+      tempfile.unlink
+    end
+
+    def get_quantity_file
+      inventory_tempfile  = get_file(INVENTORY_FILENAME)
+      tempfile            = Tempfile.new
+      xml_doc             = Nokogiri::XML(inventory_tempfile.open)
+
+      xml_doc.xpath('//ZandersDataOut').each do |item|
+        tempfile.write("#{content_for(item, 'ITEMNO')},#{content_for(item, 'AVAILABLE')}\n")
+      end
+
+      inventory_tempfile.unlink
+
+      tempfile
     end
 
     private

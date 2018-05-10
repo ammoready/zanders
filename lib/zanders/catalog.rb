@@ -18,36 +18,25 @@ module Zanders
     end
 
     def all(chunk_size, &block)
-      chunker = Zanders::Chunker.new(chunk_size)
+      chunker   = Zanders::Chunker.new(chunk_size)
+      tempfile  = get_file(CATALOG_FILENAME)
+      xml_doc   = Nokogiri::XML(tempfile.open)
 
-      connect(@options) do |ftp|
-        begin
-          csv_tempfile = Tempfile.new
+      xml_doc.xpath("//ZandersDataOut").each do |item|
+        if chunker.is_full?
+          yield(chunker.chunk)
 
-          ftp.chdir(Zanders.config.ftp_directory)
-          ftp.getbinaryfile(CATALOG_FILENAME, csv_tempfile.path)
-
-          xml_doc = Nokogiri::XML(csv_tempfile)
-
-          xml_doc.xpath("//ZandersDataOut").each do |item|
-            if chunker.is_full?
-              yield(chunker.chunk)
-
-              chunker.reset!
-            else
-              chunker.add(map_hash(item, @options[:full_product].present?))
-            end
-          end
-
-          if chunker.chunk.count > 0
-            yield(chunker.chunk)
-          end
-
-          csv_tempfile.unlink
-        ensure
-          ftp.close
+          chunker.reset!
+        else
+          chunker.add(map_hash(item, @options[:full_product].present?))
         end
       end
+
+      if chunker.chunk.count > 0
+        yield(chunker.chunk)
+      end
+
+      tempfile.unlink
     end
 
     protected
