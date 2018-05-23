@@ -175,6 +175,53 @@ module Zanders
       end
     end
 
+    def get_shipments(order_number)
+      order = build_order_data.merge({ ordernumber: order_number })
+
+      response = soap_client(ORDER_API_URL).call(:get_tracking_info, message: order)
+      response = response.body[:get_tracking_info_response][:return][:item]
+
+      if response.first[:value] == "0"
+        info = Hash.new
+        info[:number_of_shipments] = response.find { |i| i[:key] == "numberOfShipments" }[:value].to_i
+        info[:shipments] = Array.new
+
+        if info[:number_of_shipments] > 0
+          tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
+
+          tracking_numbers[:item].each do |part|
+            part    = part[:item]
+            shipment = Hash.new
+
+            part.each do |info|
+              case info[:key]
+              when 'shipCompany'
+                shipment[:company] = info[:value]
+              when 'shipVia'
+                shipment[:via] = info[:value]
+              when 'trackingNumber'
+                shipment[:tracking_number] = info[:value]
+              when 'weight'
+                shipment[:weight] = info[:value]
+              when 'url'
+                shipment[:url] = info[:value]
+              end
+            end
+
+            info[:shipments].push shipment
+          end
+
+          info[:success] = true
+
+          info
+        else
+          { success: false, error_code: response.first[:value], error_message: "No present tracking information" }
+        end
+      else
+        { success: false, error_code: response.first[:value] }
+      end
+    end
+
     def get_tracking_info(order_number)
       order = build_order_data.merge({ ordernumber: order_number })
 
