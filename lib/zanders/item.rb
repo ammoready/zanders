@@ -77,7 +77,7 @@ module Zanders
         quantity = Hash.new
 
         # We only need the quantity out of the data received
-        quantity[:quantity] = response.find { |i| i[:key] == "numberAvailable" }[:value]
+        quantity[:quantity] = response.find { |i| i[:key] == "numberAvailable" }[:value].to_i
         quantity[:success]  = true
 
         quantity

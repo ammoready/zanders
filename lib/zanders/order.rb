@@ -189,70 +189,34 @@ module Zanders
         if info[:number_of_shipments] > 0
           tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
 
-          tracking_numbers[:item].each do |part|
-            part    = part[:item]
+          if info[:number_of_shipments] == 1
+            shipment_list = [tracking_numbers[:item]]
+          elsif info[:number_of_shipments] > 1
+            shipment_list = tracking_numbers[:item]
+          end
+
+          shipment_list.each do |part|
+            part = part[:item]
             shipment = Hash.new
 
-            part.each do |info|
-              case info[:key]
+            part.each do |datum|
+              case datum[:key]
               when 'shipCompany'
-                shipment[:company] = info[:value]
+                shipment[:company] = datum[:value]
               when 'shipVia'
-                shipment[:via] = info[:value]
+                shipment[:via] = datum[:value]
               when 'trackingNumber'
-                shipment[:tracking_number] = info[:value]
-              when 'weight'
-                shipment[:weight] = info[:value]
+                shipment[:tracking_number] = datum[:value]
               when 'url'
-                shipment[:url] = info[:value]
+                shipment[:url] = datum[:value]
               end
             end
 
-            info[:shipments].push shipment
+            info[:shipments] << shipment
           end
 
           info[:success] = true
-
-          info
-        else
-          { success: false, error_code: response.first[:value], error_message: "No present tracking information" }
-        end
-      else
-        { success: false, error_code: response.first[:value] }
-      end
-    end
-
-    def get_tracking_info(order_number)
-      order = build_order_data.merge({ ordernumber: order_number })
-
-      response = soap_client(ORDER_API_URL).call(:get_tracking_info, message: order)
-      response = response.body[:get_tracking_info_response][:return][:item]
-
-      if response.first[:value] == "0"
-        info = Hash.new
-        info[:number_of_shipments] = response.find { |i| i[:key] == "numberOfShipments" }[:value].to_i
-
-        if info[:number_of_shipments] > 0
-          tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
-
-          tracking_numbers[:item][:item].each do |part|
-            case part[:key]
-            when 'shipCompany'
-              info[:company] = part[:value]
-            when 'shipVia'
-              info[:via] = part[:value]
-            when 'trackingNumber'
-              info[:tracking_number] = part[:value]
-            when 'weight'
-              info[:weight] = part[:value]
-            when 'url'
-              info[:url] = part[:value]
-            end
-          end
-
-          info[:success] = true
-
-          info
+          return info
         else
           { success: false, error_code: response.first[:value], error_message: "No present tracking information" }
         end
