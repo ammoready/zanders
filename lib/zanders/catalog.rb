@@ -48,6 +48,13 @@ module Zanders
         long_description = self.get_description(content_for(node, 'ITEMNO'))
       end
 
+      # product_type = case content_for(node, 'ITEMPRODUCTTYPE')
+      #   when 'PD', 'PR'
+      #     :ammunition
+      #   else
+      #     nil
+      #   end
+
       {
         name:               content_for(node, 'ITEMDESCRIPTION'),
         upc:                content_for(node, 'ITEMUPC'),
@@ -57,7 +64,7 @@ module Zanders
         short_description:  content_for(node, 'ITEMDESCRIPTION'),
         long_description:   long_description,
         category:           content_for(node, 'ITEMCATEGORYNAME'),
-        product_type:       content_for(node, 'ITEMPRODUCTTYPE'),
+        # product_type:       product_type,
         mfg_number:         content_for(node, 'ITEMMPN'),
         weight:             content_for(node, 'ITEMWEIGHT'),
         caliber:            features[:caliber],
