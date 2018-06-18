@@ -43,7 +43,7 @@ module Zanders
 
     def initialize
       @debug ||= false 
-      @ftp_host ||= "ftp.gzanders.com"
+      @ftp_host ||= "ftp2.gzanders.com"
       @ftp_directory ||= "Inventory/AmmoReady"
     end
   end
