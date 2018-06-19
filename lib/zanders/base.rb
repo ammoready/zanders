@@ -40,5 +40,36 @@ module Zanders
       end
     end
 
+    def get_file(filename)
+      connect(@options) do |ftp|
+        begin
+          tempfile = Tempfile.new
+
+          ftp.chdir(Zanders.config.ftp_directory)
+          ftp.getbinaryfile(filename, tempfile.path)
+
+          tempfile.close
+
+          tempfile
+        ensure
+          ftp.close
+        end
+      end
+    end
+
+    def content_for(xml_doc, field)
+      node = xml_doc.css(field).first
+
+      if node.nil?
+        nil
+      else
+        if node.css("DATA").present?
+          node.css("DATA").text.strip
+        else
+          node.content.strip
+        end
+      end
+    end
+
   end
 end

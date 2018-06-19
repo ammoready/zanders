@@ -15,6 +15,7 @@ module Zanders
 
       @username = options[:username]
       @password = options[:password]
+      @testing  = options.fetch(:testing, false)
     end
 
     # Public: Get item info by item number
@@ -76,7 +77,7 @@ module Zanders
         quantity = Hash.new
 
         # We only need the quantity out of the data received
-        quantity[:quantity] = response.find { |i| i[:key] == "numberAvailable" }[:value]
+        quantity[:quantity] = response.find { |i| i[:key] == "numberAvailable" }[:value].to_i
         quantity[:success]  = true
 
         quantity
@@ -95,8 +96,8 @@ module Zanders
     def build_request_data(hash)
       {
         username: @username,
-        password: @password
-        #testing: true
+        password: @password,
+        testing:  @testing
       }.merge(hash)
     end
 

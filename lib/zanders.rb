@@ -5,16 +5,16 @@ require 'savon'
 
 require 'zanders/base'
 require 'zanders/soap_client'
+require 'zanders/chunker'
 
 require 'zanders/user'
 require 'zanders/address'
 require 'zanders/order'
 require 'zanders/item'
 require 'zanders/inventory'
+require 'zanders/catalog'
 
 module Zanders
-
-  DEBUG = false
 
   ADDRESS_API_URL = 'https://shop2.gzanders.com/webservice/shiptoaddresses?wsdl'
   ORDER_API_URL   = 'https://shop2.gzanders.com/webservice/orders?wsdl'
@@ -35,11 +35,15 @@ module Zanders
   end
 
   class Configuration
+    attr_accessor :debug
     attr_accessor :ftp_host
     attr_accessor :ftp_directory
 
+    alias debug? debug
+
     def initialize
-      @ftp_host ||= "ftp.gzanders.com"
+      @debug ||= false 
+      @ftp_host ||= "ftp2.gzanders.com"
       @ftp_directory ||= "Inventory/AmmoReady"
     end
   end

@@ -28,6 +28,7 @@ module Zanders
 
       @username = options[:username]
       @password = options[:password]
+      @testing  = options.fetch(:testing, false)
 
       @options = options
     end
@@ -53,7 +54,7 @@ module Zanders
         ])
       end
 
-      shipping_code = (@options[:account] == :default ? 'UM' : 'UG')
+      shipping_code = (@options[:account] == :accessory ? 'UM' : 'UG')
 
       shipping_information.push(*[
         { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
@@ -174,7 +175,7 @@ module Zanders
       end
     end
 
-    def get_tracking_info(order_number)
+    def get_shipments(order_number)
       order = build_order_data.merge({ ordernumber: order_number })
 
       response = soap_client(ORDER_API_URL).call(:get_tracking_info, message: order)
@@ -182,28 +183,40 @@ module Zanders
 
       if response.first[:value] == "0"
         info = Hash.new
+        info[:number_of_shipments] = response.find { |i| i[:key] == "numberOfShipments" }[:value].to_i
+        info[:shipments] = Array.new
 
-        if response.find { |i| i[:key] == "numberOfShipments" }[:value] != "0"
+        if info[:number_of_shipments] > 0
           tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]
 
-          tracking_numbers[:item][:item].each do |part|
-            case part[:key]
-            when 'shipCompany'
-              info[:company] = part[:value]
-            when 'shipVia'
-              info[:via] = part[:value]
-            when 'trackingNumber'
-              info[:tracking_number] = part[:value]
-            when 'weight'
-              info[:weight] = part[:value]
-            when 'url'
-              info[:url] = part[:value]
+          if info[:number_of_shipments] == 1
+            shipment_list = [tracking_numbers[:item]]
+          elsif info[:number_of_shipments] > 1
+            shipment_list = tracking_numbers[:item]
+          end
+
+          shipment_list.each do |part|
+            part = part[:item]
+            shipment = Hash.new
+
+            part.each do |datum|
+              case datum[:key]
+              when 'shipCompany'
+                shipment[:company] = datum[:value]
+              when 'shipVia'
+                shipment[:via] = datum[:value]
+              when 'trackingNumber'
+                shipment[:tracking_number] = datum[:value]
+              when 'url'
+                shipment[:url] = datum[:value]
+              end
             end
+
+            info[:shipments] << shipment
           end
 
           info[:success] = true
-
-          info
+          return info
         else
           { success: false, error_code: response.first[:value], error_message: "No present tracking information" }
         end
@@ -223,8 +236,8 @@ module Zanders
           order: { "xsi:type" => "ns2:Map" }
         },
         username: @username,
-        password: @password
-        #testing: true
+        password: @password,
+        testing:  @testing
       }
 
       hash

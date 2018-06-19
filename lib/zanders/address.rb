@@ -16,6 +16,7 @@ module Zanders
 
       @username = options[:username]
       @password = options[:password]
+      @testing  = options.fetch(:testing, false)
     end
 
     def self.ship_to_number(address, options = {})
@@ -48,7 +49,7 @@ module Zanders
 
         ship_to_number
       else
-        { success: false, error_code: response.first[:value], error_message: response.last[:value] }
+        { success: false, error_code: response.first[:value], error_message: (response.length == 3 ? response[1][:value] : nil) }
       end
     end
 
@@ -78,8 +79,8 @@ module Zanders
             { key: 'fflno',     value: hash[:fflno]     },
             { key: 'fflexp',    value: hash[:fflexp]    }
           ]
-        }
-        #testing: true
+        },
+        testing: @testing
       }
     end
 

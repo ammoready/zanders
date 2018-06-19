@@ -1,3 +1,3 @@
 module Zanders
-  VERSION = "1.4.10"
+  VERSION = "2.2.5".freeze
 end

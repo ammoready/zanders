@@ -1,8 +1,7 @@
 module Zanders
   class Inventory < Base
 
-    INVENTORY_FILENAME  = "zandersinv.csv"
-    QUANTITY_FILENAME   = "liveinv.csv"
+    INVENTORY_FILENAME = "liveinv.xml"
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -10,52 +9,71 @@ module Zanders
       @options = options
     end
 
-    def self.all(chunk_size = 15, options = {}, &block)
+    def self.all(chunk_size = 100, options = {}, &block)
       requires!(options, :username, :password)
       new(options).all(chunk_size, &block)
     end
 
-    def self.quantities(chunk_size = 15, options = {}, &block)
+    def self.get_quantity_file(options = {})
       requires!(options, :username, :password)
-      new(options).quantities(chunk_size, &block)
+      new(options).get_quantity_file
+    end
+
+    def self.quantity(chunk_size = 100, options = {}, &block)
+      requires!(options, :username, :password)
+      new(options).all(chunk_size, &block)
+    end
+
+    def self.get_file(options = {})
+      requires!(options, :username, :password)
+      new(options).get_file
     end
 
     def all(chunk_size, &block)
-      connect(@options) do |ftp|
-        begin
-          csv_tempfile = Tempfile.new
+      chunker   = Zanders::Chunker.new(chunk_size)
+      tempfile  = get_file(INVENTORY_FILENAME)
+      xml_doc   = Nokogiri::XML(tempfile.open)
 
-          ftp.chdir(Zanders.config.ftp_directory)
-          ftp.getbinaryfile(INVENTORY_FILENAME, csv_tempfile.path)
+      xml_doc.xpath('//ZandersDataOut').each do |item|
+        if chunker.is_full?
+          yield(chunker.chunk)
 
-          SmarterCSV.process(csv_tempfile, { :chunk_size => chunk_size, :convert_values_to_numeric => false }) do |chunk|
-            yield(chunk)
-          end
-
-          csv_tempfile.unlink
-        ensure
-          ftp.close
+          chunker.reset!
+        else
+          chunker.add(map_hash(item))
         end
       end
+
+      if chunker.chunk.count > 0
+        yield(chunker.chunk)
+      end
+
+      tempfile.unlink
     end
 
-    def quantities(chunk_size, &block)
-      connect(@options) do |ftp|
-        begin
-          csv_tempfile = Tempfile.new
+    def get_quantity_file
+      inventory_tempfile  = get_file(INVENTORY_FILENAME)
+      tempfile            = Tempfile.new
+      xml_doc             = Nokogiri::XML(inventory_tempfile.open)
 
-          ftp.chdir(Zanders.config.ftp_directory)
-          ftp.getbinaryfile(QUANTITY_FILENAME, csv_tempfile.path)
-
-          SmarterCSV.process(csv_tempfile, { :chunk_size => chunk_size, :convert_values_to_numeric => false }) do |chunk|
-            yield(chunk)
-          end
-
-          csv_tempfile.unlink
-        ensure
-          ftp.close
-        end
+      xml_doc.xpath('//ZandersDataOut').each do |item|
+        tempfile.puts("#{content_for(item, 'ITEMNO')},#{content_for(item, 'AVAILABLE')}")
       end
+
+      inventory_tempfile.unlink
+      tempfile.close
+
+      tempfile.path
+    end
+
+    private
+
+    def map_hash(node)
+      {
+        item_identifier:  content_for(node, 'ITEMNO'),
+        quantity:         content_for(node, 'AVAILABLE'),
+        price:            content_for(node, 'ITEMPRICE')
+      }
     end
 
   end
