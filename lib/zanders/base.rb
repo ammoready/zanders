@@ -5,6 +5,7 @@ module Zanders
       requires!(options, :username, :password)
 
       Net::FTP.open(Zanders.config.ftp_host, options[:username], options[:password]) do |ftp|
+        ftp.debug_mode = Zanders.config.debug_mode
         ftp.passive = true
 
         yield ftp

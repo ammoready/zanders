@@ -35,15 +35,15 @@ module Zanders
   end
 
   class Configuration
-    attr_accessor :debug
+    attr_accessor :debug_mode
     attr_accessor :ftp_host
     attr_accessor :ftp_directory
 
     alias debug? debug
 
     def initialize
-      @debug ||= false 
-      @ftp_host ||= "ftp2.gzanders.com"
+      @debug_mode    ||= false
+      @ftp_host      ||= "ftp2.gzanders.com"
       @ftp_directory ||= "Inventory/AmmoReady"
     end
   end
