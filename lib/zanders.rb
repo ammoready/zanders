@@ -39,7 +39,7 @@ module Zanders
     attr_accessor :ftp_host
     attr_accessor :ftp_directory
 
-    alias debug? debug
+    alias debug_mode? debug_mode
 
     def initialize
       @debug_mode    ||= false
