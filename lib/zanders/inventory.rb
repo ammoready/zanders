@@ -30,22 +30,11 @@ module Zanders
     end
 
     def all(chunk_size, &block)
-      chunker   = Zanders::Chunker.new(chunk_size)
       tempfile  = get_file(INVENTORY_FILENAME)
       xml_doc   = Nokogiri::XML(tempfile.open)
 
       xml_doc.xpath('//ZandersDataOut').each do |item|
-        if chunker.is_full?
-          yield(chunker.chunk)
-
-          chunker.reset!
-        else
-          chunker.add(map_hash(item))
-        end
-      end
-
-      if chunker.chunk.count > 0
-        yield(chunker.chunk)
+        map_hash(item)
       end
 
       tempfile.unlink
