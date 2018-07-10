@@ -5,7 +5,6 @@ require 'savon'
 
 require 'zanders/base'
 require 'zanders/soap_client'
-require 'zanders/chunker'
 
 require 'zanders/user'
 require 'zanders/address'
