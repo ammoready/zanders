@@ -6,10 +6,6 @@ module Zanders
     def initialize(options = {})
       requires!(options, :username, :password)
       @options = options
-
-      if options[:full_product].present?
-        self.load_descriptions
-      end
     end
 
     def self.all(chunk_size = 15, options = {}, &block)
@@ -28,7 +24,7 @@ module Zanders
 
           chunker.reset!
         else
-          chunker.add(map_hash(item, @options[:full_product].present?))
+          chunker.add(map_hash(item))
         end
       end
 
@@ -41,12 +37,8 @@ module Zanders
 
     protected
 
-    def map_hash(node, full_product = false)
+    def map_hash(node)
       features = self.map_features(node)
-
-      if full_product
-        long_description = self.get_description(content_for(node, 'ITEMNO'))
-      end
 
       # product_type = case content_for(node, 'ITEMPRODUCTTYPE')
       #   when 'PD', 'PR'
