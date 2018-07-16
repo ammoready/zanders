@@ -12,9 +12,11 @@ describe Zanders::Item do
   let(:item) { Zanders::Item.new(credentials) }
 
   describe '#get_info' do
+    let(:item_info) { FixtureHelper.get_fixture_file('item_info.xml').read }
+
     it 'gets the info' do
-      savon.expects(:get_item_info).with(message: :any).returns(sample_item_info)
-      info = item.get_info("GSPEC0595A")
+      savon.expects(:get_item_info).with(message: :any).returns(item_info)
+      info = item.get_info('ABC00111')
 
       expect(info[:price]).to eq('255.0000')
       expect(info[:success]).to eq(true)
@@ -22,9 +24,11 @@ describe Zanders::Item do
   end
 
   describe '#get_quantity' do
+    let(:item_quantity) { FixtureHelper.get_fixture_file('item_quantity.xml').read }
+
     it 'gets the quantity' do
-      savon.expects(:get_item_inventory).with(message: :any).returns(sample_item_quantity)
-      quantity = item.get_quantity("GSPEC0595A")
+      savon.expects(:get_item_inventory).with(message: :any).returns(item_quantity)
+      quantity = item.get_quantity('ABC00111')
 
       expect(quantity[:quantity]).to eq(58)
       expect(quantity[:success]).to eq(true)

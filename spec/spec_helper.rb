@@ -1,13 +1,19 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
-require 'rspec'
+require 'active_support'
+require 'active_support/core_ext'
 require 'pp'
 
-require "zanders"
+require 'zanders'
 
 # Require all files from the /spec/support dir
 Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
-  config.include SampleResponses
+  # configure options for dummy FTP connection
+  config.before(:suite) do
+    Zanders.configure do |config|
+      config.ftp_host = "ftp.host.com"
+    end
+  end
 end
