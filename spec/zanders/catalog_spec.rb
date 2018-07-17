@@ -27,14 +27,31 @@ describe Zanders::Catalog do
         count += 1
         case count
         when 1
-          expect(item[:upc]).to  eq('990000000100')
-          expect(item[:name]).to eq('Loyalton')
+          expect(item[:name]).to            eq('Loyalton')
+          expect(item[:upc]).to             eq('990000000100')
+          expect(item[:item_identifier]).to eq('000011')
+          expect(item[:price]).to           eq('13.0')
+          expect(item[:quantity]).to        eq('6')
+          expect(item[:category]).to        eq('ACCESSORIES')
+          expect(item[:brand]).to           eq('Skimia')
+          expect(item[:caliber]).to         eq(nil)
         when 2
-          expect(item[:upc]).to  eq('990000000200')
-          expect(item[:name]).to eq('Kamba')
+          expect(item[:name]).to              eq('Kaymbo WITH NIGHT SIGHTS')
+          expect(item[:upc]).to               eq('990000000200')
+          expect(item[:item_identifier]).to   eq('000012')
+          expect(item[:price]).to             eq('464.0')
+          expect(item[:quantity]).to          eq('0')
+          expect(item[:category]).to          eq('PISTOL')
+          expect(item[:brand]).to             eq('Kamba')
+          expect(item[:features][:finish]).to eq('FLAT DARK EARTH')
         when 30
-          expect(item[:upc]).to  eq('990000000300')
-          expect(item[:name]).to eq('Cogilith')
+          expect(item[:name]).to            eq('Cogilith')
+          expect(item[:upc]).to             eq('990000000300')
+          expect(item[:item_identifier]).to eq('000130')
+          expect(item[:price]).to           eq('78.0')
+          expect(item[:quantity]).to        eq('6')
+          expect(item[:category]).to        eq('ACCESSORIES')
+          expect(item[:brand]).to           eq('Skimia')
         end
       end
 

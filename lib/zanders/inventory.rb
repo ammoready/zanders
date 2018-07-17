@@ -5,7 +5,6 @@ module Zanders
 
     def initialize(options = {})
       requires!(options, :username, :password)
-
       @options = options
     end
 
@@ -22,11 +21,6 @@ module Zanders
     def self.quantity(options = {}, &block)
       requires!(options, :username, :password)
       new(options).all &block
-    end
-
-    def self.get_file(options = {})
-      requires!(options, :username, :password)
-      new(options).get_file
     end
 
     def all(&block)

@@ -2,6 +2,7 @@ module Zanders
   class Catalog < Base
 
     CATALOG_FILENAME = 'zandersinv.xml'
+    ITEM_NODE_NAME   = 'ZandersDataOut'
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -16,8 +17,11 @@ module Zanders
     def all(&block)
       tempfile = get_file(CATALOG_FILENAME)
 
-      Nokogiri::XML(tempfile).xpath("//ZandersDataOut").each do |item|
-        yield map_hash(item)
+      Nokogiri::XML::Reader.from_io(tempfile).each do |node|
+        next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
+        next unless node.name == ITEM_NODE_NAME
+
+        yield map_hash(Nokogiri::XML::DocumentFragment.parse(node.inner_xml))
       end
 
       tempfile.close
