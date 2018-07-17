@@ -5,13 +5,12 @@ module Zanders
 
     def initialize(options = {})
       requires!(options, :username, :password)
-
       @options = options
     end
 
-    def self.all(chunk_size = 100, options = {}, &block)
+    def self.all(options = {}, &block)
       requires!(options, :username, :password)
-      new(options).all(chunk_size, &block)
+      new(options).all &block
     end
 
     def self.get_quantity_file(options = {})
@@ -19,39 +18,33 @@ module Zanders
       new(options).get_quantity_file
     end
 
-    def self.quantity(chunk_size = 100, options = {}, &block)
+    def self.quantity(options = {}, &block)
       requires!(options, :username, :password)
-      new(options).all(chunk_size, &block)
+      new(options).all &block
     end
 
-    def self.get_file(options = {})
-      requires!(options, :username, :password)
-      new(options).get_file
-    end
+    def all(&block)
+      tempfile = get_file(INVENTORY_FILENAME)
 
-    def all(chunk_size, &block)
-      tempfile  = get_file(INVENTORY_FILENAME)
-      xml_doc   = Nokogiri::XML(tempfile.open)
-
-      xml_doc.xpath('//ZandersDataOut').each do |item|
-        map_hash(item)
+      Nokogiri::XML(tempfile).xpath('//ZandersDataOut').each do |item|
+        yield map_hash(item)
       end
 
+      tempfile.close
       tempfile.unlink
     end
 
     def get_quantity_file
-      inventory_tempfile  = get_file(INVENTORY_FILENAME)
-      tempfile            = Tempfile.new
-      xml_doc             = Nokogiri::XML(inventory_tempfile.open)
+      inventory_tempfile = get_file(INVENTORY_FILENAME)
+      tempfile           = Tempfile.new
 
-      xml_doc.xpath('//ZandersDataOut').each do |item|
+      Nokogiri::XML(inventory_tempfile).xpath('//ZandersDataOut').each do |item|
         tempfile.puts("#{content_for(item, 'ITEMNO')},#{content_for(item, 'AVAILABLE')}")
       end
 
+      inventory_tempfile.close
       inventory_tempfile.unlink
       tempfile.close
-
       tempfile.path
     end
 
@@ -59,9 +52,9 @@ module Zanders
 
     def map_hash(node)
       {
-        item_identifier:  content_for(node, 'ITEMNO'),
-        quantity:         content_for(node, 'AVAILABLE'),
-        price:            content_for(node, 'ITEMPRICE')
+        item_identifier: content_for(node, 'ITEMNO'),
+        quantity:        content_for(node, 'AVAILABLE'),
+        price:           content_for(node, 'ITEMPRICE')
       }
     end
 

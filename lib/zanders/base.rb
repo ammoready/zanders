@@ -49,8 +49,6 @@ module Zanders
           ftp.chdir(Zanders.config.ftp_directory)
           ftp.getbinaryfile(filename, tempfile.path)
 
-          tempfile.close
-
           tempfile
         ensure
           ftp.close

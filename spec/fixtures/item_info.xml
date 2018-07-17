@@ -1,0 +1,33 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="http://shop2.gzanders.com/webservice/items" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://xml.apache.org/xml-soap" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+  <env:Body xmlns:rpc="http://www.w3.org/2003/05/soap-rpc">
+    <ns1:getItemInfoResponse env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+      <rpc:result>return</rpc:result>
+      <return xsi:type="ns2:Map">
+        <item>
+          <key xsi:type="xsd:string">returnCode</key>
+          <value xsi:type="xsd:int">0</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">itemNumber</key>
+          <value xsi:type="xsd:string">ABC00111</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">itemDescription</key>
+          <value xsi:type="xsd:string">Tagcat PLASTIC CASE | NEAT USER MANUAL</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">itemPrice</key>
+          <value xsi:type="xsd:string">255.0000</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">itemWeight</key>
+          <value xsi:type="xsd:string">11.00-</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">numberAvailable</key>
+          <value xsi:type="xsd:int">58</value>
+        </item>
+      </return>
+    </ns1:getItemInfoResponse>
+  </env:Body>
+</env:Envelope>
