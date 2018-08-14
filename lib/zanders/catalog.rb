@@ -1,8 +1,8 @@
 module Zanders
   class Catalog < Base
 
-    CATALOG_FILENAME = 'zandersinv.xml'
-    ITEM_NODE_NAME   = 'ZandersDataOut'
+    CATALOG_FILENAME = 'zandersinv.xml'.freeze
+    ITEM_NODE_NAME   = 'ZandersDataOut'.freeze
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -17,7 +17,7 @@ module Zanders
     def all(&block)
       tempfile = get_file(CATALOG_FILENAME)
 
-      Nokogiri::XML::Reader.from_io(tempfile).each do |node|
+      Nokogiri::XML::Reader.from_io(tempfile, nil, Zanders.config.file_encoding).each do |node|
         next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
         next unless node.name == ITEM_NODE_NAME
 

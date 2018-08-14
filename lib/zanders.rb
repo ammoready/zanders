@@ -35,6 +35,7 @@ module Zanders
 
   class Configuration
     attr_accessor :debug_mode
+    attr_accessor :file_encoding
     attr_accessor :ftp_host
     attr_accessor :ftp_directory
 
@@ -42,8 +43,9 @@ module Zanders
 
     def initialize
       @debug_mode    ||= false
-      @ftp_host      ||= "ftp2.gzanders.com"
-      @ftp_directory ||= "Inventory/AmmoReady"
+      @file_encoding ||= 'Windows-1252'
+      @ftp_host      ||= 'ftp2.gzanders.com'
+      @ftp_directory ||= 'Inventory/AmmoReady'
     end
   end
 end
