@@ -6,8 +6,8 @@ require 'zanders/version'
 Gem::Specification.new do |spec|
   spec.name          = "zanders"
   spec.version       = Zanders::VERSION
-  spec.authors       = ["David Knight"]
-  spec.email         = ["viacoffee@gmail.com"]
+  spec.authors       = ["AmmoReady.com"]
+  spec.email         = ["admin@ammoready.com"]
 
   spec.summary       = %q{Ruby library for Zanders}
   spec.description   = %q{}
@@ -20,6 +20,8 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.required_ruby_version = '~> 2.3'
 
   spec.add_dependency "nokogiri", "~> 1.6"
   spec.add_dependency "savon", "~> 2.11.1"
