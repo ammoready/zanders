@@ -48,9 +48,19 @@ module Zanders
 
       items.each do |item|
         order_items.push(item: [
-          { key: 'itemNumber', value: item[:item_number], attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:string'} }},
-          { key: 'quantity', value: item[:quantity] , attributes!: { key: {'xsi:type' => 'xsd:string'}, value: {'xsi:type' => 'xsd:string'} }},
-          { key: 'allowBackOrder', value: false, attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: {'xsi:type' => 'xsd:boolean'} }}
+          { 
+            key: 'itemNumber', 
+            value: item[:item_number], 
+            attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: { 'xsi:type' => 'xsd:string' } }
+          }, { 
+            key: 'quantity', 
+            value: item[:quantity],
+            attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: { 'xsi:type' => 'xsd:string' } }
+          }, { 
+            key: 'allowBackOrder', 
+            value: false, 
+            attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: { 'xsi:type' => 'xsd:boolean' } }
+          }
         ])
       end
 
@@ -74,12 +84,12 @@ module Zanders
         end
       else
         shipping_information.push(*[
-          { key: 'shipToName',      value: address[:name]     },
-          { key: 'shipToAddress1',  value: address[:address1] },
-          { key: 'shipToAddress2',  value: address[:address2] },
-          { key: 'shipToCity',      value: address[:city]     },
-          { key: 'shipToState',     value: address[:state]    },
-          { key: 'shipToZip',       value: address[:zip]      }
+          { key: 'shipToName',     value: address[:name]     },
+          { key: 'shipToAddress1', value: address[:address1] },
+          { key: 'shipToAddress2', value: address[:address2] },
+          { key: 'shipToCity',     value: address[:city]     },
+          { key: 'shipToState',    value: address[:state]    },
+          { key: 'shipToZip',      value: address[:zip]      }
         ])
       end
 
@@ -107,18 +117,33 @@ module Zanders
         key: 'items',
         value: order_items,
         attributes!: {
-          key: {"xsi:type" => "xsd:string"},
-          value: {"enc:itemType" => "ns2:Map[#{order_items.count}]", "enc:arraySize" => order_items.count.to_s, "xsi:type" => "enc:Array"}
+          key: { 
+            "xsi:type" => "xsd:string"
+          },
+          value: {
+            "enc:itemType"  => "ns2:Map[#{order_items.count}]",
+            "enc:arraySize" => order_items.count.to_s, 
+            "xsi:type"      => "enc:Array"
+          }
         }
       })
 
-      response = soap_client(ORDER_API_URL).call(:create_order, message: order)
-      response = response.body[:create_order_response][:return][:item]
+      soap_response = soap_client(ORDER_API_URL).call(:create_order, message: order)
+      hash = soap_response.body[:create_order_response][:return][:item]
 
-      if response.first[:value] == "0"
-        { success: true, order_number: response.last[:value] }
+      if hash.first[:value] == "0"
+        {
+          success:       true,
+          order_number:  hash.find { |h| h[:key] == 'orderNumber' }&.dig(:value),
+          removed_items: hash.find { |h| h[:key] == 'removedItems' }&.dig(:value, :item),
+          raw_xml:       soap_response.to_xml
+        }
       else
-        { success: false, error_code: response.first[:value], error_message: response.last[:value] }
+        {
+          success:       false,
+          error_code:    hash.first[:value],
+          error_message: hash.last[:value]
+        }
       end
     end
 
@@ -182,9 +207,9 @@ module Zanders
       response = response.body[:get_tracking_info_response][:return][:item]
 
       if response.first[:value] == "0"
-        info = Hash.new
+        info = { shipments: [] }
+
         info[:number_of_shipments] = response.find { |i| i[:key] == "numberOfShipments" }[:value].to_i
-        info[:shipments] = Array.new
 
         if info[:number_of_shipments] > 0
           tracking_numbers = response.find { |i| i[:key] == "trackingNumbers" }[:value]

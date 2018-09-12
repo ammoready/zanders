@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="http://shop2.gzanders.com/webservice/orders" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://xml.apache.org/xml-soap" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
+  <env:Body xmlns:rpc="http://www.w3.org/2003/05/soap-rpc">
+    <ns1:createOrderResponse env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+      <rpc:result>return</rpc:result>
+      <return xsi:type="ns2:Map">
+        <item>
+          <key xsi:type="xsd:string">returnCode</key>
+          <value xsi:type="xsd:int">0</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">orderNumber</key>
+          <value xsi:type="xsd:int">111111</value>
+        </item>
+        <item>
+          <key xsi:type="xsd:string">removedItems</key>
+          <value enc:itemType="ns2:Map" enc:arraySize="2" xsi:type="enc:Array">
+            <item xsi:type="ns2:Map">
+              <item>
+                <key xsi:type="xsd:string">itemNumber</key>
+                <value xsi:type="xsd:string">BBBB</value>
+              </item>
+              <item>
+                <key xsi:type="xsd:string">quantityRequested</key>
+                <value xsi:type="xsd:string">1</value>
+              </item>
+              <item>
+                <key xsi:type="xsd:string">quantityAvailable</key>
+                <value xsi:type="xsd:int">0</value>
+              </item>
+            </item>
+            <item xsi:type="ns2:Map">
+              <item>
+                <key xsi:type="xsd:string">itemNumber</key>
+                <value xsi:type="xsd:string">CCCCC</value>
+              </item>
+              <item>
+                <key xsi:type="xsd:string">quantityRequested</key>
+                <value xsi:type="xsd:string">1</value>
+              </item>
+              <item>
+                <key xsi:type="xsd:string">quantityAvailable</key>
+                <value xsi:type="xsd:int">0</value>
+              </item>
+            </item>
+          </value>
+        </item>
+      </return>
+    </ns1:createOrderResponse>
+  </env:Body>
+</env:Envelope>

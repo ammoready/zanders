@@ -1,6 +1,14 @@
 module Zanders
   class SoapClient < Base
 
+    NAMESPACES = {
+      "xmlns:env" => "http://www.w3.org/2003/05/soap-envelope",
+      "xmlns:xsd" => "http://www.w3.org/2001/XMLSchema",
+      "xmlns:xsl" => "http://www.w3.org/2001/XMLSchema-Instance",
+      "xmlns:ns2" => "http://xml.apache.org/xml-soap",
+      "xmlns:enc" => "http://www.w3.org/2003/05/soap-encoding"
+    }
+
     ##
     # == Item Service
     #
@@ -12,17 +20,9 @@ module Zanders
     protected
 
     def soap_client(api_url)
-      namespaces = {
-        "xmlns:env" => "http://www.w3.org/2003/05/soap-envelope",
-        "xmlns:xsd" => "http://www.w3.org/2001/XMLSchema",
-        "xmlns:xsl" => "http://www.w3.org/2001/XMLSchema-Instance",
-        "xmlns:ns2" => "http://xml.apache.org/xml-soap",
-        "xmlns:enc" => "http://www.w3.org/2003/05/soap-encoding"
-      }
-
       @soap_client ||= Savon.client do
         wsdl(api_url)
-        namespaces(namespaces)
+        namespaces(NAMESPACES)
         namespace_identifier(:ns1)
         strip_namespaces true
         ssl_verify_mode :none
