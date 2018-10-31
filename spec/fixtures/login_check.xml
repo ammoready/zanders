@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="http://shop2.gzanders.com/webservice/orders" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://xml.apache.org/xml-soap" xmlns:enc="http://www.w3.org/2003/05/soap-encoding">
   <env:Body xmlns:rpc="http://www.w3.org/2003/05/soap-rpc">
-  	<ns1:loginCheckResponse env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
-  	  <rpc:result>return</rpc:result>
-  	  <return xsi:type="ns2:Map">
-  	  	<item>
-  	  	  <key xsi:type="xsd:string">returnCode</key>
+    <ns1:loginCheckResponse env:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+      <rpc:result>return</rpc:result>
+      <return xsi:type="ns2:Map">
+        <item>
+          <key xsi:type="xsd:string">returnCode</key>
           <value xsi:type="xsd:int">0</value>
-  	  	</item>
-  	  	<item>
-  	  	<key xsi:type="xsd:string">somethingElse</key>
+        </item>
+        <item>
+        <key xsi:type="xsd:string">somethingElse</key>
           <value xsi:type="xsd:int">0</value>
-  	  	</item>
-  	  </return>
-  	</ns1:loginCheckResponse>
+        </item>
+      </return>
+    </ns1:loginCheckResponse>
   </env:Body>
 </env:Envelope>
