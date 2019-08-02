@@ -20,13 +20,12 @@ describe Zanders::Catalog do
       allow(zandersinv).to receive(:unlink) { nil }
     end
 
-    it 'Yields each item to a block' do
-      count = 0
+    it 'returns an array of all items' do
+      items = Zanders::Catalog.all(credentials)
 
-      Zanders::Catalog.all(credentials) do |item|
-        count += 1
-        case count
-        when 1
+      items.each_with_index do |item, index|
+        case index
+        when 0
           expect(item[:name]).to            eq('Loyalton')
           expect(item[:upc]).to             eq('990000000100')
           expect(item[:item_identifier]).to eq('000011')
@@ -35,7 +34,7 @@ describe Zanders::Catalog do
           expect(item[:category]).to        eq('ACCESSORIES')
           expect(item[:brand]).to           eq('Skimia')
           expect(item[:caliber]).to         eq(nil)
-        when 2
+        when 1
           expect(item[:name]).to              eq('Kaymbo WITH NIGHT SIGHTS')
           expect(item[:upc]).to               eq('990000000200')
           expect(item[:item_identifier]).to   eq('000012')
@@ -44,7 +43,7 @@ describe Zanders::Catalog do
           expect(item[:category]).to          eq('PISTOL')
           expect(item[:brand]).to             eq('Kamba')
           expect(item[:features][:finish]).to eq('FLAT DARK EARTH')
-        when 30
+        when 29
           expect(item[:name]).to            eq('Cogilith')
           expect(item[:upc]).to             eq('990000000300')
           expect(item[:item_identifier]).to eq('000130')
@@ -55,7 +54,7 @@ describe Zanders::Catalog do
         end
       end
 
-      expect(count).to eq(30)
+      expect(items.count).to eq(30)
     end
   end
 
