@@ -9,23 +9,30 @@ module Zanders
       @options = options
     end
 
-    def self.all(options = {}, &block)
+    def self.all(options = {})
       requires!(options, :username, :password)
-      new(options).all &block
+      new(options).all
     end
 
-    def all(&block)
+    def all
+      items    = []
       tempfile = get_file(CATALOG_FILENAME)
 
-      Nokogiri::XML::Reader.from_io(tempfile, nil, Zanders.config.file_encoding).each do |node|
-        next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
-        next unless node.name == ITEM_NODE_NAME
+      Nokogiri::XML::Reader.from_io(tempfile, nil, Zanders.config.file_encoding).each do |reader|
+        next unless reader.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
+        next unless reader.name == ITEM_NODE_NAME
 
-        yield map_hash(Nokogiri::XML::DocumentFragment.parse(node.inner_xml))
+        node = Nokogiri::XML.parse(reader.outer_xml)
+
+        _map_hash = map_hash(node.css(ITEM_NODE_NAME))
+
+        items << _map_hash unless _map_hash.nil?
       end
 
       tempfile.close
       tempfile.unlink
+
+      items
     end
 
     protected
