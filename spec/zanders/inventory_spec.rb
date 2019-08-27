@@ -20,25 +20,24 @@ describe Zanders::Inventory do
       allow(liveinv).to receive(:unlink) { nil }
     end
 
-    it 'Yields each item to a block' do
-      count = 0
+    it 'returns array of items' do
+      items = Zanders::Inventory.all(credentials)
 
-      Zanders::Inventory.all(credentials) do |item|
-        count += 1
-        case count
-        when 1
+      items.each_with_index do |item, index|
+        case index
+        when 0
           expect(item[:item_identifier]).to  eq('000011')
           expect(item[:quantity]).to eq('10')
-        when 2
+        when 1
           expect(item[:item_identifier]).to  eq('000012')
           expect(item[:quantity]).to eq('0')
-        when 30
+        when 29
           expect(item[:item_identifier]).to  eq('000130')
           expect(item[:quantity]).to eq('24')
         end
       end
 
-      expect(count).to eq(30)
+      expect(items.count).to eq(30)
     end
   end
 
