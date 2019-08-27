@@ -8,9 +8,9 @@ module Zanders
       @options = options
     end
 
-    def self.all(options = {}, &block)
+    def self.all(options = {})
       requires!(options, :username, :password)
-      new(options).all &block
+      new(options).all
     end
 
     def self.get_quantity_file(options = {})
@@ -18,20 +18,25 @@ module Zanders
       new(options).get_quantity_file
     end
 
-    def self.quantity(options = {}, &block)
+    def self.quantity(options = {})
       requires!(options, :username, :password)
-      new(options).all &block
+      new(options).all
     end
 
-    def all(&block)
+    def all
+      items    = []
       tempfile = get_file(INVENTORY_FILENAME)
 
       Nokogiri::XML(tempfile).xpath('//ZandersDataOut').each do |item|
-        yield map_hash(item)
+        _map_hash = map_hash(item)
+
+        items << _map_hash unless _map_hash.nil?
       end
 
       tempfile.close
       tempfile.unlink
+
+      items
     end
 
     def get_quantity_file
