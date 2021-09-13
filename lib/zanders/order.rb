@@ -201,7 +201,8 @@ module Zanders
     end
 
     def get_shipments(order_number)
-      order = build_order_data.merge({ ordernumber: order_number })
+      order_number = { ordernumber: { "@xsi:type" => "xsd:string", :content! => order_number } }
+      order = build_order_data.merge(order_number)
 
       response = soap_client(ORDER_API_URL).call(:get_tracking_info, message: order)
       response = response.body[:get_tracking_info_response][:return][:item]
@@ -258,8 +259,7 @@ module Zanders
     def build_order_data
       hash = {
         :attributes! => {
-          order: { "xsi:type" => "ns2:Map" },
-          ordernumber: { "xsi:type" => "xsd:string" }
+          order: { "xsi:type" => "ns2:Map" }
         },
         username: @username,
         password: @password,
