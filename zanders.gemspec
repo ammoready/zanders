@@ -6,8 +6,8 @@ require 'zanders/version'
 Gem::Specification.new do |spec|
   spec.name          = "zanders"
   spec.version       = Zanders::VERSION
-  spec.authors       = ["AmmoReady.com"]
-  spec.email         = ["admin@ammoready.com"]
+  spec.authors       = ["David Knight", "Jeffrey Dill"]
+  spec.email         = ["jeffdill2@gmail.com"]
 
   spec.summary       = %q{Ruby library for Zanders}
   spec.description   = %q{}
@@ -29,8 +29,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "smarter_csv", "~> 1.1.4"
 
   spec.add_development_dependency "activesupport", "~> 5"
-  spec.add_development_dependency "bundler", "~> 1.14"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "bundler", ">= 2.2.10"
+  spec.add_development_dependency "rake", ">= 12.3.3"
   spec.add_development_dependency "rspec", "~> 3.3"
   spec.add_development_dependency "webmock", "~> 3.4"
 end
