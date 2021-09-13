@@ -48,17 +48,17 @@ module Zanders
 
       items.each do |item|
         order_items.push(item: [
-          { 
-            key: 'itemNumber', 
-            value: item[:item_number], 
+          {
+            key: 'itemNumber',
+            value: item[:item_number],
             attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: { 'xsi:type' => 'xsd:string' } }
-          }, { 
-            key: 'quantity', 
+          }, {
+            key: 'quantity',
             value: item[:quantity],
             attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: { 'xsi:type' => 'xsd:string' } }
-          }, { 
-            key: 'allowBackOrder', 
-            value: false, 
+          }, {
+            key: 'allowBackOrder',
+            value: false,
             attributes!: { key: { 'xsi:type' => 'xsd:string' }, value: { 'xsi:type' => 'xsd:boolean' } }
           }
         ])
@@ -117,12 +117,12 @@ module Zanders
         key: 'items',
         value: order_items,
         attributes!: {
-          key: { 
+          key: {
             "xsi:type" => "xsd:string"
           },
           value: {
             "enc:itemType"  => "ns2:Map[#{order_items.count}]",
-            "enc:arraySize" => order_items.count.to_s, 
+            "enc:arraySize" => order_items.count.to_s,
             "xsi:type"      => "enc:Array"
           }
         }
@@ -258,7 +258,8 @@ module Zanders
     def build_order_data
       hash = {
         :attributes! => {
-          order: { "xsi:type" => "ns2:Map" }
+          order: { "xsi:type" => "ns2:Map" },
+          ordernumber: { "xsi:type" => "xsd:string" }
         },
         username: @username,
         password: @password,
