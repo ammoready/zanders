@@ -257,7 +257,7 @@ module Zanders
     #
     # Returns Hash of username, password, and cast assignments
     def build_order_data
-      hash = {
+      {
         :attributes! => {
           order: { "xsi:type" => "ns2:Map" }
         },
@@ -265,8 +265,6 @@ module Zanders
         password: @password,
         testing:  @testing
       }
-
-      hash
     end
 
     # Private: Formats the name and phone number into a
