@@ -201,8 +201,7 @@ module Zanders
     end
 
     def get_shipments(order_number)
-      order_number = { ordernumber: { "@xsi:type" => "xsd:string", :content! => order_number } }
-      order = build_order_data.merge(order_number)
+      order = build_order_data.merge({ ordernumber: { "@xsi:type" => "xsd:string", :content! => order_number } })
 
       response = soap_client(ORDER_API_URL).call(:get_tracking_info, message: order)
       response = response.body[:get_tracking_info_response][:return][:item]
