@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = '~> 2.3'
+  spec.required_ruby_version = '>= 2.3'
 
   spec.add_dependency "nokogiri", "~> 1.11.0"
   spec.add_dependency "savon", "~> 2.11.1"
@@ -29,9 +29,9 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "smarter_csv", "~> 1.1.4"
 
-  spec.add_development_dependency "activesupport", "~> 5"
-  spec.add_development_dependency "bundler", ">= 2.2.10"
-  spec.add_development_dependency "rake", ">= 12.3.3"
-  spec.add_development_dependency "rspec", "~> 3.3"
-  spec.add_development_dependency "webmock", "~> 3.4"
+  spec.add_development_dependency "activesupport"
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "webmock"
 end
