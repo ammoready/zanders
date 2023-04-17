@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "savon", "~> 2.11.1"
   spec.add_dependency "wasabi", "~> 3.5.0"
 
-  spec.add_runtime_dependency "smarter_csv", "~> 1.1.4"
+  spec.add_runtime_dependency "smarter_csv"
 
   spec.add_development_dependency "activesupport"
   spec.add_development_dependency "bundler"
