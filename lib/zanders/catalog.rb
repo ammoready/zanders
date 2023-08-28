@@ -72,7 +72,7 @@ module Zanders
     end
 
     def active_sale?(sale_dates)
-      return if !sale_dates.all?(&:present?)
+      return false if !sale_dates.all?(&:present?)
 
       Date.today.between?(Date.parse(sale_dates.first), Date.parse(sale_dates.second))
     end
