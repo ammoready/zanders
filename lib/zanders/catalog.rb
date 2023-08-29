@@ -39,13 +39,14 @@ module Zanders
 
     def map_hash(node)
       features = map_features(node)
+      sale_dates = [content_for(node, 'ITEMSALESTART'), content_for(node, 'ITEMSALEEND')]
 
       {
         name:              content_for(node, 'ITEMDESCRIPTION'),
         upc:               content_for(node, 'ITEMUPC'),
         item_identifier:   content_for(node, 'ITEMNO'),
         quantity:          content_for(node, 'ITEMQTYAVAIL'),
-        price:             content_for(node, 'ITEMPRICE'),
+        price:             active_sale?(sale_dates) ?  content_for(node, 'ITEMSALEPRICE') : content_for(node, 'ITEMPRICE'),
         short_description: content_for(node, 'ITEMDESCRIPTION'),
         category:          content_for(node, 'ITEMCATEGORYNAME'),
         mfg_number:        content_for(node, 'ITEMMPN'),
@@ -70,5 +71,10 @@ module Zanders
       features.symbolize_keys!
     end
 
+    def active_sale?(sale_dates)
+      return false if !sale_dates.all?(&:present?)
+
+      Date.today.between?(Date.parse(sale_dates.first), Date.parse(sale_dates.second))
+    end
   end
 end
