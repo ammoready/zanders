@@ -69,7 +69,7 @@ module Zanders
         'UM'
       when :firearm
         'UG'
-      when :main
+      when :default
         'BW'
       end
 
