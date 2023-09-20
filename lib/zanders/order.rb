@@ -64,7 +64,14 @@ module Zanders
         ])
       end
 
-      shipping_code = (@options[:account] == :accessory ? 'UM' : 'UG')
+      shipping_code = case @options[:account]
+      when :accessory
+        'UM'
+      when :firearm
+        'UG'
+      when :main
+        'BW'
+      end
 
       shipping_information.push(*[
         { key: 'shipDate', value: Time.now.strftime("%Y-%m-%d") },
