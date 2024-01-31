@@ -15,7 +15,7 @@ module Zanders
     end
 
     protected
-
+ 
     # Wrapper to `self.requires!` that can be used as an instance method.
     def requires!(*args)
       self.class.requires!(*args)
